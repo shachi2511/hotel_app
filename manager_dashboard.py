@@ -21,7 +21,7 @@ def login_action():
         else: messagebox.showerror("Error", "SSN not found.")
         cur.close(); conn.close()
     except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def register_manager():
     """Req 1: Registration"""
     ssn = simpledialog.askstring("Register", "Enter 9-digit SSN:")
@@ -34,7 +34,7 @@ def register_manager():
             cur.execute("INSERT INTO Managers (SSN, name, email) VALUES (%s, %s, %s)", (ssn, name, email))
             conn.commit(); messagebox.showinfo("Success", "Manager Registered!"); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def add_hotel_db():
     """Req 2: Add Hotel"""
     name = simpledialog.askstring("Add Hotel", "Hotel Name:")
@@ -49,7 +49,7 @@ def add_hotel_db():
             cur.execute("INSERT INTO Hotel (name, street_name, street_number, city) VALUES (%s,%s,%s,%s)", (name, st, num, city))
             conn.commit(); messagebox.showinfo("Success", "Hotel Added!"); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def update_hotel_db():
     """Req 2: Update Hotel"""
     h_id = simpledialog.askinteger("Update Hotel", "Enter Hotel ID:")
@@ -61,7 +61,7 @@ def update_hotel_db():
             cur.execute("UPDATE Hotel SET name = %s WHERE hotel_id = %s", (new_name, h_id))
             conn.commit(); messagebox.showinfo("Success", "Hotel Updated!"); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def remove_hotel_db():
     """Req 2: Remove Hotel"""
     h_id = simpledialog.askinteger("Remove Hotel", "Enter Hotel ID:")
@@ -72,19 +72,14 @@ def remove_hotel_db():
             cur.execute("DELETE FROM Hotel WHERE hotel_id = %s", (h_id,))
             conn.commit(); messagebox.showinfo("Success", "Hotel Removed!"); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def manage_rooms_db():
     """Req 2: Manage Rooms (Add/Remove)"""
     h_id = simpledialog.askinteger("Rooms", "Hotel ID:")
     r_num = simpledialog.askinteger("Rooms", "Room Number:")
-    
- 
     action_input = simpledialog.askstring("Rooms", "Type 'add' or 'remove':")
-    if not action_input: 
-        return  
+    if not action_input: return
     action = action_input.lower()
-   
-
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -95,13 +90,9 @@ def manage_rooms_db():
             cur.execute("INSERT INTO Room VALUES (%s,%s,%s,%s,%s)", (h_id, r_num, win, yr, acc))
         else:
             cur.execute("DELETE FROM Room WHERE hotel_id = %s AND room_number = %s", (h_id, r_num))
-        conn.commit()
-        messagebox.showinfo("Success", "Room Updated!")
-        cur.close(); conn.close()
-    except Exception as e: 
-        messagebox.showerror("Error", str(e))
-
-
+        conn.commit(); messagebox.showinfo("Success", "Room Updated!"); cur.close(); conn.close()
+    except Exception as e: messagebox.showerror("Error", str(e))
+ 
 def remove_client_db():
     """Req 3: Remove Client"""
     email = simpledialog.askstring("Remove Client", "Enter Client Email:")
@@ -112,7 +103,7 @@ def remove_client_db():
             cur.execute("DELETE FROM Client WHERE email = %s", (email,))
             conn.commit(); messagebox.showinfo("Success", "Client Removed!"); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def view_top_k():
     """Req 4: Top-K Clients by Bookings"""
     k = simpledialog.askinteger("Top-K", "Enter value for K:")
@@ -128,7 +119,7 @@ def view_top_k():
             output = "\n".join([f"{r[0]} ({r[1]}): {r[2]} bookings" for r in res])
             messagebox.showinfo(f"Top {k} Clients", output if res else "No data."); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def view_room_stats():
     """Req 5: All Rooms with Number of Bookings"""
     try:
@@ -141,7 +132,7 @@ def view_room_stats():
         output = "\n".join([f"{r[0]} Room {r[1]}: {r[2]} bookings" for r in res])
         messagebox.showinfo("Room Stats", output if res else "No rooms."); cur.close(); conn.close()
     except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def hotel_stats():
     """Req 6: Hotel Name, Total Bookings, Avg Rating"""
     try:
@@ -155,7 +146,7 @@ def hotel_stats():
         output = "\n".join([f"{r[0]}: {r[1]} bookings, Rating: {round(r[2],1) if r[2] else 'N/A'}" for r in res])
         messagebox.showinfo("Hotel Stats", output if res else "No hotels."); cur.close(); conn.close()
     except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def clients_by_city():
     """Req 7: Clients in C1 who booked in C2"""
     c1 = simpledialog.askstring("Search", "Client Home City (C1):")
@@ -171,7 +162,7 @@ def clients_by_city():
             output = "\n".join([f"{r[0]} ({r[1]})" for r in res])
             messagebox.showinfo("Results", output if res else "No matches."); cur.close(); conn.close()
         except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def problematic_hotels():
     """Req 8: Problematic Chicago Hotels"""
     try:
@@ -184,23 +175,23 @@ def problematic_hotels():
         res = cur.fetchall()
         messagebox.showinfo("Problematic Hotels", "\n".join([r[0] for r in res]) if res else "None found."); cur.close(); conn.close()
     except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 def client_spending():
     """Req 9: Client Spending Report"""
     try:
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""SELECT c.name, SUM(b.price_per_day * (b.end_date - b.start_date))
-            FROM Client c, Booking b WHERE c.email = b.email GROUP BY c.name ORDER BY SUM DESC""")
+            FROM Client c, Booking b WHERE c.email = b.email GROUP BY c.name ORDER BY 2 DESC""")
         res = cur.fetchall()
         output = "\n".join([f"{r[0]}: ${r[1]}" for r in res])
         messagebox.showinfo("Spending Report", output if res else "No data."); cur.close(); conn.close()
     except Exception as e: messagebox.showerror("Error", str(e))
-
+ 
 # ──────────────────────────────────────────────────────────
 # UI
 # ──────────────────────────────────────────────────────────
-
+ 
 def show_manager_menu():
     for widget in root.winfo_children(): widget.destroy()
     tk.Label(root, text="MANAGER DASHBOARD", font=("Arial", 14, "bold")).pack(pady=10)
@@ -208,14 +199,14 @@ def show_manager_menu():
     frame = tk.Frame(root); frame.pack(pady=10)
     L = tk.Frame(frame); L.pack(side="left", padx=15)
     R = tk.Frame(frame); R.pack(side="right", padx=15)
-
+ 
     tk.Label(L, text="MANAGEMENT", font=("Arial", 10, "bold")).pack(pady=3)
     tk.Button(L, text="Add Hotel",      command=add_hotel_db,    width=22).pack(pady=2)
     tk.Button(L, text="Update Hotel",   command=update_hotel_db, width=22).pack(pady=2)
     tk.Button(L, text="Remove Hotel",   command=remove_hotel_db, width=22).pack(pady=2)
     tk.Button(L, text="Manage Rooms",   command=manage_rooms_db, width=22).pack(pady=2)
     tk.Button(L, text="Remove Client",  command=remove_client_db,width=22).pack(pady=2)
-
+ 
     tk.Label(R, text="REPORTS", font=("Arial", 10, "bold")).pack(pady=3)
     tk.Button(R, text="Top-K Clients",       command=view_top_k,          width=22).pack(pady=2)
     tk.Button(R, text="Room Booking Stats",  command=view_room_stats,     width=22).pack(pady=2)
@@ -223,7 +214,7 @@ def show_manager_menu():
     tk.Button(R, text="Clients by City",     command=clients_by_city,     width=22).pack(pady=2)
     tk.Button(R, text="Problematic Hotels",  command=problematic_hotels,  width=22).pack(pady=2)
     tk.Button(R, text="Client Spending",     command=client_spending,     width=22).pack(pady=2)
-
+ 
 root = tk.Tk(); root.title("UIC Hotel Manager"); root.geometry("580x500")
 tk.Label(root, text="Enter Manager SSN:").pack(pady=10)
 SSN_entry = tk.Entry(root, width=30); SSN_entry.pack()
