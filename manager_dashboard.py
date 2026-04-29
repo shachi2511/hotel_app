@@ -77,7 +77,14 @@ def manage_rooms_db():
     """Req 2: Manage Rooms (Add/Remove)"""
     h_id = simpledialog.askinteger("Rooms", "Hotel ID:")
     r_num = simpledialog.askinteger("Rooms", "Room Number:")
-    action = simpledialog.askstring("Rooms", "Type 'add' or 'remove':").lower()
+    
+ 
+    action_input = simpledialog.askstring("Rooms", "Type 'add' or 'remove':")
+    if not action_input: 
+        return  
+    action = action_input.lower()
+   
+
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -88,8 +95,12 @@ def manage_rooms_db():
             cur.execute("INSERT INTO Room VALUES (%s,%s,%s,%s,%s)", (h_id, r_num, win, yr, acc))
         else:
             cur.execute("DELETE FROM Room WHERE hotel_id = %s AND room_number = %s", (h_id, r_num))
-        conn.commit(); messagebox.showinfo("Success", "Room Updated!"); cur.close(); conn.close()
-    except Exception as e: messagebox.showerror("Error", str(e))
+        conn.commit()
+        messagebox.showinfo("Success", "Room Updated!")
+        cur.close(); conn.close()
+    except Exception as e: 
+        messagebox.showerror("Error", str(e))
+
 
 def remove_client_db():
     """Req 3: Remove Client"""
