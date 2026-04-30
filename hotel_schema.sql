@@ -1,4 +1,5 @@
 -- Hotel Management System – CS480 Spring 2026
+CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 CREATE TABLE Managers (
     SSN         CHAR(9)      PRIMARY KEY,
