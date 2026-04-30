@@ -269,12 +269,6 @@ def cancel_booking():
 
 
 def leave_review():
-    cur.execute("SELECT 1 FROM Booking WHERE email=%s AND hotel_id=%s", (client_email, h_id))
-    if not cur.fetchone():
-        messagebox.showerror("Error", "You can only review hotels you have stayed at.")
-        cur.close();
-        conn.close()
-        return
     h_id = simpledialog.askinteger("Review", "Hotel ID:")
     rating = simpledialog.askinteger("Review", "Rating 0-10:")
     msg = simpledialog.askstring("Review", "Message:")
@@ -286,12 +280,16 @@ def leave_review():
         try:
             conn = get_connection()
             cur = conn.cursor()
+            cur.execute("SELECT 1 FROM Booking WHERE email=%s AND hotel_id=%s", (client_email, h_id))
+            if not cur.fetchone():
+                messagebox.showerror("Error", "You can only review hotels you have stayed at.")
+                cur.close(); conn.close()
+                return
             cur.execute("INSERT INTO Review (hotel_id, email, message, rating) VALUES (%s,%s,%s,%s)",
                         (h_id, client_email, msg, rating))
             conn.commit()
             messagebox.showinfo("Success", "Review Added!")
-            cur.close()
-            conn.close()
+            cur.close(); conn.close()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
